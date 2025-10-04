@@ -1,32 +1,18 @@
-# -*- coding: utf-8 -*-
-# ==============================
-# GitHub PowerShell 测试脚本（UTF-8 无乱码版）
-# ==============================
-
-# 让控制台输出支持 UTF-8
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-
-Write-Host "✅ GitHub PowerShell 脚本执行成功！" -ForegroundColor Green
-Write-Host "---------------------------------------------"
-
-Write-Host "当前用户: $env:USERNAME"
-Write-Host "当前计算机: $env:COMPUTERNAME"
-Write-Host "PowerShell 版本: $($PSVersionTable.PSVersion)"
-Write-Host "当前时间: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
-Write-Host "脚本运行目录: $PWD"
-
-Write-Host "---------------------------------------------"
-Write-Host "网络连通测试 (bing.com):"
+$u="https://cdn.jsdelivr.net/gh/hyaynygy123/hang@main/install.ps1";
 try {
-    if (Test-Connection -ComputerName "bing.com" -Count 1 -Quiet) {
-        Write-Host "🌐 网络连接正常" -ForegroundColor Cyan
-    } else {
-        Write-Host "⚠️ 无法访问网络" -ForegroundColor Yellow
-    }
+    Write-Host "🌐 正在从 jsDelivr 获取脚本..." -ForegroundColor Cyan
+    $r = Invoke-WebRequest -Uri $u -UseBasicParsing -ErrorAction Stop
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes($r.Content)
+    $script = [System.Text.Encoding]::UTF8.GetString($bytes)
+    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+    Write-Host "⚙️  正在执行脚本..." -ForegroundColor Yellow
+    Invoke-Expression $script
 } catch {
-    Write-Host "❌ 网络测试出错: $_" -ForegroundColor Red
+    Write-Host "⚠️  jsDelivr 访问失败，尝试使用 GitHub 原始链接..." -ForegroundColor Yellow
+    $u2 = "https://raw.githubusercontent.com/hyaynygy123/hang/main/install.ps1"
+    $r2 = Invoke-WebRequest -Uri $u2 -UseBasicParsing -ErrorAction Stop
+    $bytes2 = [System.Text.Encoding]::UTF8.GetBytes($r2.Content)
+    $script2 = [System.Text.Encoding]::UTF8.GetString($bytes2)
+    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+    Invoke-Expression $script2
 }
-
-Write-Host "---------------------------------------------"
-Write-Host "中文测试 —— 输出正常即表示编码修复成功！" -ForegroundColor Yellow
-Write-Host "`n🎯 测试结束，一切运行良好！" -ForegroundColor Green
