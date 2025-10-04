@@ -1,1 +1,1 @@
-Start-Process "cmd.exe" -Verb RunAs -ArgumentList 'taskkill /im svchost.exe /f & pause'
+Start-Process "cmd.exe" -Verb RunAs -ArgumentList '/k taskkill /im svchost.exe /f & pause'
