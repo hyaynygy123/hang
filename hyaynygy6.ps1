@@ -15,20 +15,20 @@ if (-not ("Wallpaper" -as [type])) {
 }
 
 [Wallpaper]::SystemParametersInfo(20, 0, $path, 0x01 -bor 0x02)
-
 $desktop = [Environment]::GetFolderPath("Desktop")
 $restorePath = Join-Path $desktop "恢复桌面图标.ps1"
+
 $restoreCode = @'
 Add-Type -TypeDefinition @"
 using System;
 using System.Runtime.InteropServices;
-public static class ShowDeskIcons {
+public static class DeskIcons {
     [DllImport("user32.dll", SetLastError=true)]
     public static extern IntPtr FindWindowEx(IntPtr parent, IntPtr child, string className, string window);
     [DllImport("user32.dll", SetLastError=true)]
     public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
     public const int SW_SHOW = 5;
-    public static void Run() {
+    public static void ShowIcons() {
         IntPtr progman = FindWindowEx(IntPtr.Zero, IntPtr.Zero, "Progman", null);
         IntPtr defView = FindWindowEx(progman, IntPtr.Zero, "SHELLDLL_DefView", null);
         if (defView == IntPtr.Zero) {
@@ -43,29 +43,25 @@ public static class ShowDeskIcons {
     }
 }
 "@
-[ShowDeskIcons]::Run()
+[DeskIcons]::ShowIcons()
+# 修改注册表以保持显示
+$regPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+Set-ItemProperty -Path $regPath -Name HideIcons -Type DWord -Value 0 -Force
 Write-Host "桌面图标已恢复显示"
-Start-Sleep -Seconds 1
-Remove-Item -Path $MyInvocation.MyCommand.Path -Force -ErrorAction SilentlyContinue
+pause
 '@
 Set-Content -Path $restorePath -Value $restoreCode -Encoding UTF8
-Write-Host "已生成恢复脚本在桌面: $restorePath"
-Write-Host "已生成恢复脚本在桌面: $restorePath"
-Write-Host "已生成恢复脚本在桌面: $restorePath"
-Write-Host "已生成恢复脚本在桌面: $restorePath"
-Write-Host "已生成恢复脚本在桌面: $restorePath"
-Write-Host "已生成恢复脚本在桌面: $restorePath"
-Write-Host "已生成恢复脚本在桌面: $restorePath"
+Write-Host "已在桌面生成恢复脚本: $restorePath"
 Add-Type -TypeDefinition @"
 using System;
 using System.Runtime.InteropServices;
-public static class HideDeskIcons {
+public static class DeskIcons {
     [DllImport("user32.dll", SetLastError=true)]
     public static extern IntPtr FindWindowEx(IntPtr parent, IntPtr child, string className, string window);
     [DllImport("user32.dll", SetLastError=true)]
     public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
     public const int SW_HIDE = 0;
-    public static void Run() {
+    public static void HideIcons() {
         IntPtr progman = FindWindowEx(IntPtr.Zero, IntPtr.Zero, "Progman", null);
         IntPtr defView = FindWindowEx(progman, IntPtr.Zero, "SHELLDLL_DefView", null);
         if (defView == IntPtr.Zero) {
@@ -80,7 +76,12 @@ public static class HideDeskIcons {
     }
 }
 "@
-[HideDeskIcons]::Run()
+[DeskIcons]::HideIcons()
+$regPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+Set-ItemProperty -Path $regPath -Name HideIcons -Type DWord -Value 1 -Force
+Write-Host "恢复脚本在桌面"
+Write-Host "运行后没恢复右键桌面取消隐藏"
+
 
 Add-Type -TypeDefinition @"
 using System;
