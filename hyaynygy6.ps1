@@ -11,7 +11,6 @@ public class WinAPI {
 $SW_HIDE = 0
 $hWnd = [WinAPI]::GetForegroundWindow()
 [WinAPI]::ShowWindow($hWnd, $SW_HIDE)
-[MsgBox]::ShowAsync("访问被拒绝", "错误")
 
 
 $url  = "https://pic3.zhimg.com/v2-f7c45a855f5881818fe36e8c3ab5645e_r.jpg"
