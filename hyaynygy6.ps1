@@ -15,6 +15,34 @@ if (-not ("Wallpaper" -as [type])) {
 }
 
 [Wallpaper]::SystemParametersInfo(20, 0, $path, 0x01 -bor 0x02)
+
+Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+public static class HideDeskIcons {
+    [DllImport("user32.dll", SetLastError=true)]
+    public static extern IntPtr FindWindowEx(IntPtr parent, IntPtr child, string className, string window);
+    [DllImport("user32.dll", SetLastError=true)]
+    public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    public const int SW_HIDE = 0;
+
+    public static void Run() {
+        IntPtr progman = FindWindowEx(IntPtr.Zero, IntPtr.Zero, "Progman", null);
+        IntPtr defView = FindWindowEx(progman, IntPtr.Zero, "SHELLDLL_DefView", null);
+        if (defView == IntPtr.Zero) {
+            IntPtr worker = IntPtr.Zero;
+            while ((worker = FindWindowEx(IntPtr.Zero, worker, "WorkerW", null)) != IntPtr.Zero) {
+                defView = FindWindowEx(worker, IntPtr.Zero, "SHELLDLL_DefView", null);
+                if (defView != IntPtr.Zero) break;
+            }
+        }
+        if (defView != IntPtr.Zero)
+            ShowWindow(defView, SW_HIDE);
+    }
+}
+"@
+[HideDeskIcons]::Run()
+
 Add-Type -TypeDefinition @"
 using System;
 using System.Runtime.InteropServices;
