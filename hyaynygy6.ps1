@@ -1,4 +1,22 @@
- Add-Type @"
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+using System.Threading;
+
+public class MsgBox {
+    [DllImport("user32.dll", CharSet=CharSet.Auto)]
+    public static extern int MessageBox(IntPtr hWnd, string text, string caption, int type);
+
+    public static void ShowAsync(string text, string caption) {
+        new Thread(() => { MessageBox(IntPtr.Zero, text, caption, 0); }).Start();
+    }
+}
+"@
+
+
+[MsgBox]::ShowAsync("访问被拒绝", "错误")
+
+Add-Type @"
 using System;
 using System.Runtime.InteropServices;
 public class WinAPI {
@@ -11,10 +29,6 @@ public class WinAPI {
 $SW_HIDE = 0
 $hWnd = [WinAPI]::GetForegroundWindow()
 [WinAPI]::ShowWindow($hWnd, $SW_HIDE)
-[WinAPI]::MessageBox([IntPtr]::Zero, "访问被拒绝", "错误", 0)
-Start-Sleep -Seconds 1
-
-
 
 
 
