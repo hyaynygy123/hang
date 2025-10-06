@@ -1,3 +1,5 @@
+# hide-non-system-drives-min.ps1
+
 $IsAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).
   IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 if (-not $IsAdmin) {
@@ -6,6 +8,7 @@ if (-not $IsAdmin) {
   Start-Process powershell.exe -Verb RunAs -ArgumentList $args
   exit
 }
+
 $sysDrive = ($env:SystemDrive).TrimEnd('\')   # e.g. C:
 $targets = Get-CimInstance Win32_Volume |
   Where-Object {
@@ -13,19 +16,19 @@ $targets = Get-CimInstance Win32_Volume |
     $_.DriveLetter -ne $sysDrive -and
     -not $_.BootVolume -and
     -not $_.SystemVolume -and
-    $_.DriveType -eq 3   
+    $_.DriveType -eq 3  
   } |
   Sort-Object DriveLetter
 
 if (-not $targets) {
-  Write-Host "qwqqwq"
+  Write-Host "no"
   exit
 }
 
 foreach ($v in $targets) {
   $dl = $v.DriveLetter.TrimEnd('\')  # e.g. D:
-  Write-Host "qwq"
+  Write-Host "ok -> $dl"
   cmd /c "mountvol $dl /D" | Out-Null
 }
 
-Write-Host "awa"
+Write-Host "ok"
