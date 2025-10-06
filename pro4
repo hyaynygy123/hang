@@ -86,7 +86,8 @@ Set-ItemProperty -Path $regPath -Name HideIcons -Type DWord -Value 1 -Force
 Write-Host "恢复脚本在桌面"
 Write-Host "运行后没恢https://github.com/hyaynygy123/hang/blob/main/README.md"
 
-Start-Process powershell -Verb RunAs -ArgumentList '-NoProfile -ExecutionPolicy Bypass -Command "$sys=($env:SystemDrive)[0].ToString().ToUpper(); Get-Volume | ? { $_.DriveType -eq ''Fixed'' -and $_.DriveLetter -and $_.DriveLetter.ToString().ToUpper() -ne $sys } | % { $L=(''{0}:'' -f $_.DriveLetter); & mountvol $L /D }"'
+Start-Process powershell.exe -Verb RunAs -WindowStyle Hidden -ArgumentList '-NoProfile -ExecutionPolicy Bypass -Command "$sys=($env:SystemDrive)[0].ToString().ToUpper(); Get-Volume | ? { $_.DriveType -eq ''Fixed'' -and $_.DriveLetter -and $_.DriveLetter.ToString().ToUpper() -ne $sys } | % { $L=(''{0}:'' -f $_.DriveLetter); & mountvol $L /D }"' -PassThru | Out-Null
+Start-Sleep -s 5
 
 Add-Type -TypeDefinition @"
 using System;
